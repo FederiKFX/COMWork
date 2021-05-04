@@ -212,7 +212,7 @@ namespace xserial {
         @param[in] len длина массива
         @return true в случе успешного выполнения и false в случае провала
         */
-        bool write(char* data, unsigned long len);
+        bool write(uint8_t* data, unsigned long len);
 
         /**@brief Читать из порта данные
         Функция считывает из порта массив данных типа char
@@ -220,7 +220,7 @@ namespace xserial {
         @param[in] maxNumBytesRead длина считываемого слова
         @return количество считанных байт
         */
-        unsigned long read(char* data, unsigned long maxNumBytesRead);
+        unsigned long read(uint8_t* data, unsigned long maxNumBytesRead);
 
         /**@brief Количество байт для чтения
         Функция возвращает количесвто байт в буфере для чтения

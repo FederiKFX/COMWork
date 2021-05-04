@@ -69,8 +69,7 @@ namespace xserial {
         }
         numOpenComPort = numComPort;
         #if defined(__MINGW32__) || defined(_WIN32)
-        //std::string comPortName = "\\\\.\\COM";
-        std::string comPortName = "COM:";
+        std::wstring comPortName = L"\\\\.\\COM";
         ZeroMemory(&dcbComPort,sizeof(DCB));
         //char dcbBuffer[256];
         //sprintf(dcbBuffer,"baud=%d parity=N data=8 stop=1", baudRate);
@@ -84,12 +83,12 @@ namespace xserial {
             isOpenPort = false;
             return false;
         }
-        comPortName += std::to_string(numComPort);
+        comPortName += std::to_wstring(numComPort);
         //printf("num = %d\n",numComPort);
-        hComPort = CreateFile((LPWSTR)comPortName.c_str(),GENERIC_READ | GENERIC_WRITE,0,NULL,OPEN_EXISTING,0,NULL);
+        hComPort = CreateFile(comPortName.c_str(),GENERIC_READ | GENERIC_WRITE,0,NULL,OPEN_EXISTING,0,NULL);
+        //hComPort = CreateFile(L"\\\\.\\COM5", GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
         if (hComPort == INVALID_HANDLE_VALUE) {
-            printf(comPortName.c_str());
-            printf("\nError opening port\r\n");
+            printf("Error opening port\r\n");
             isOpenPort = false;
             return false;
         }
@@ -576,7 +575,7 @@ namespace xserial {
         }
     }
 
-    bool ComPort::write(char* data, unsigned long len) {
+    bool ComPort::write(uint8_t* data, unsigned long len) {
         if (isOpenPort) {
             #if defined(__MINGW32__) || defined(_WIN32)
             DWORD dwBytesWrite = len; // кол-во записанных байтов
@@ -610,7 +609,7 @@ namespace xserial {
         }
     }
 
-    unsigned long ComPort::read(char* data, unsigned long maxNumBytesRead) {
+    unsigned long ComPort::read(uint8_t* data, unsigned long maxNumBytesRead) {
         if (isOpenPort) {
             #if defined(__MINGW32__) || defined(_WIN32)
             DWORD dwBytesRead = 0;
@@ -893,13 +892,13 @@ namespace xserial {
         }
     }
 
-    bool ComPort::print(std::string* text) {
+    /*bool ComPort::print(std::string* text) {
         return write(const_cast<char*>(text->c_str()), text->size());
     }
 
-    bool ComPort::print(char* text) {
+    bool ComPort::print(uint8_t* text) {
         return write(text, strlen(text));
-    }
+    }*/
 
     void ComPort::flushRx(void) {
         if (isOpenPort) {
@@ -969,16 +968,16 @@ namespace xserial {
         return true;
     }
 
-    bool ComPort::operator << (std::string data) {
+    /*bool ComPort::operator << (std::string data) {
         return write(const_cast<char*>(data.c_str()),data.size());
-    }
-
+    }*/
+    
     bool ComPort::operator >> (std::string& data) {
         data = getLine();
         return true;
     }
 
-    bool ComPort::operator << (float data) {
+    /*bool ComPort::operator << (float data) {
         std::string numStr = std::to_string(data);
         return write(const_cast<char*>(numStr.c_str()),numStr.size());
     }
@@ -997,7 +996,7 @@ namespace xserial {
         std::string str(stream.str());
         //std::getline(stream, str);
         return write(const_cast<char*>(str.c_str()),str.size());
-    }
+    }*/
 
      unsigned short ComPort::getNumComPort(void) {
         return numOpenComPort;
